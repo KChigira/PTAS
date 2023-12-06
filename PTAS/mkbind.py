@@ -53,7 +53,9 @@ class MKBind(object):
             self.data = pd.concat([self.data, sub_data], axis=0)
 
         #Sort binded VCF
-        self.data.sort_values(['#CHROM', 'POS'], ascending=[True, True])
+        self.data['POS'] = self.data['POS'].astype(int)
+        self.data = self.data.sort_values(['#CHROM', 'POS'],
+                                          ascending=[True, True])
         self.data = self.data.reset_index(drop=True)
 
         #Correct infomation of primers
