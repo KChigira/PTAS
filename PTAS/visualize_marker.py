@@ -4,9 +4,10 @@ from PTAS.utils import read_vcf, time_stamp
 import matplotlib.pyplot as plt
 
 class VisualizeMarker(object):
-    def __init__(self, vcf, out_png, fai):
+    def __init__(self, vcf, out_png, fai, is_bind):
         self.vcf = vcf
         self.png = out_png
+        self.is_bind = is_bind
 
         #Prepare chromosome information
         self.fai_data = []
@@ -24,6 +25,9 @@ class VisualizeMarker(object):
         data = vcf_list[2]
         self.data = pd.DataFrame(data, columns=col)
         self.data['POS'] = self.data['POS'].astype(int)
+
+        #Line color
+        self.colors = ['black', 'red', 'blue', 'green', 'purple', 'olive', 'cyan', 'orange'] #8 colors [0]~[7]
 
     def run(self):
         print(time_stamp(),
@@ -81,8 +85,19 @@ class VisualizeMarker(object):
             ax.plot([i, i], [0, self.fai_data['len'][i]], color="black") 
             data_select = self.data[self.data['#CHROM'] == self.fai_data['chr'][i]]
             for j in range(len(data_select)):
+                #set color
+                vcf_num = 0
+                if self.is_bind: #The VCF binded from multiple sample
+                    info = str(data_select.at[data_select.index[j], 'INFO'])
+                    info_spl = info.split(';')
+                    for k in range(len(info_spl)):
+                        elem = info_spl[k].split('=')
+                        if elem[0] == 'VCF':
+                            vcf_num = int(elem[1])
+
                 pos = data_select['POS'].iloc[j]
-                ax.plot([i-0.3, i+0.3], [pos, pos], color="black", linewidth=0.5)
+                ax.plot([i-0.3, i+0.3], [pos, pos], 
+                        color=self.colors[vcf_num % 8], linewidth=0.5)
 
         plt.xlim(-1, len(self.fai_data['chr']))
         plt.ylim(longest_len*1.05, -longest_len*0.05)

@@ -18,6 +18,7 @@ setup(name='PTAS',
             'mkvcf = PTAS.mkvcf:main',
             'mkprimer = PTAS.mkprimer:main',
             'mkselect = PTAS.mkselect:main',
+            'mkbind = PTAS.mkbind:main',
             ]
       }
     )

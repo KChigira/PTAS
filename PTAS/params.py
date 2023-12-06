@@ -15,6 +15,8 @@ class Params(object):
             parser = self.mkprimer_options()
         elif self.program_name == 'mkselect':
             parser = self.mkselect_options()
+        elif self.program_name == 'mkbind':
+            parser = self.mkbind_options()
 
         if len(sys.argv) == 1:
             args = parser.parse_args(['-h'])
@@ -345,6 +347,45 @@ class Params(object):
                             version='%(prog)s {}'.format(__version__))
         return parser
     
+    def mkbind_options(self):
+        parser = argparse.ArgumentParser(description='PTAS version {}'.format(__version__),
+                                         formatter_class=argparse.RawTextHelpFormatter)
+        parser.usage = ('mkbind -i <FASTA Index file>\n'
+                        '       -V <VCF with Primer>\n'
+                        '       -V <VCF with Primer>\n'
+                        '       ...\n'
+                        '       -o <Output file name>\n')
+
+        # set options
+        parser.add_argument('-i', '--fai',
+                            action='store',
+                            required=True,
+                            type=str,
+                            help='Index file (.fai) of reference fasta.',
+                            metavar='')
+        
+        parser.add_argument('-V', '--vcf',
+                            action='append',
+                            required=True,
+                            type=str,
+                            help=('VCF file with primers.\n'
+                                  'VCF selected by "mkselect" is assumed'),
+                            metavar='')
+        
+        parser.add_argument('-o', '--output',
+                            action='store',
+                            default='mkbind_result',
+                            type=str,
+                            help=('Stem of output file names.'),
+                            metavar='')
+        
+        # set version
+        parser.add_argument('-v', '--version',
+                            action='version',
+                            version='%(prog)s {}'.format(__version__))
+        return parser
+ 
+
     def mkvcf_check_args(self, args):
         #Does a project file with the same name exist?
         if os.path.isdir(args.project):

@@ -36,11 +36,15 @@ class MKSelect(object):
             self.den_table = pd.read_csv(self.density, sep='\t') 
         #Marker density data
 
+        target_num = 0
+        if self.target is not None:
+            target_num = len(self.target)
+
         if self.type == 'SNP':
             if self.den_table is None:
-                self.out_stem = str(self.vcf).replace('.vcf', '_{}mk_selected_{}'.format(self.num_marker, self.target))
+                self.out_stem = str(self.vcf).replace('.vcf', '_{}mk_selected_{}targets'.format(self.num_marker, target_num))
             else:
-                self.out_stem = str(self.vcf).replace('.vcf', '_{}mk_selected_{}_adjusted'.format(self.num_marker, self.target))
+                self.out_stem = str(self.vcf).replace('.vcf', '_{}mk_selected_{}targets_adjusted'.format(self.num_marker, target_num))
         else:
             self.out_stem = str(self.vcf).replace('.vcf', '_{}mk_selected_min{}bp_max{}bp_{}'.format(self.num_marker, self.mindif,  self.maxdif, self.target))
 
@@ -258,7 +262,7 @@ class MKSelect(object):
         out_vcf_name = '{}.vcf'.format(self.out_stem)
         out_png_name = '{}.png'.format(self.out_stem)
 
-        vm = VisualizeMarker(out_vcf_name, out_png_name, self.fai)
+        vm = VisualizeMarker(out_vcf_name, out_png_name, self.fai, False)
         vm.run()
         
 
